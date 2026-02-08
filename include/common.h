@@ -44,7 +44,12 @@ enum {
     MSG_MIRROR_TAOBAO,
     MSG_MIRROR_OFFICIAL,
     MSG_RESTARTING_DOCKER,
-    MSG_LANG_SELECT
+    MSG_LANG_SELECT,
+    MSG_CAT_OS,
+    MSG_CAT_DEV,
+    MSG_CAT_SERVICES,
+    MSG_CAT_TOOLBOX,
+    MSG_PLUGINS
 };
 
 // Utility functions
@@ -55,6 +60,8 @@ void print_header(const char *title);
 void clear_input_buffer();
 double test_mirror_speed(const char *url);
 const char* get_msg(int msg_id);
+void save_config();
+void load_config();
 
 // Module functions
 void menu_apt();
@@ -63,5 +70,9 @@ void menu_npm();
 void menu_docker();
 void menu_toolbox();
 void show_sysinfo();
+void menu_rust();
+void menu_go();
+void menu_github();
+void menu_plugins();
 
 #endif

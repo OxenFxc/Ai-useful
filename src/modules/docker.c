@@ -8,6 +8,14 @@ void change_docker_mirror(const char *mirror_url) {
         return;
     }
 
+    printf(COLOR_YELLOW "WARNING: This will overwrite /etc/docker/daemon.json. Proceed? (y/n): " COLOR_RESET);
+    char confirm;
+    if (scanf(" %c", &confirm) != 1 || (confirm != 'y' && confirm != 'Y')) {
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
     backup_file(config_path);
 
     char content[1024];

@@ -14,13 +14,29 @@ void change_apt_mirror(const char *mirror_url) {
     backup_file(source_file);
 
     char cmd[1024];
-    // Generic regex to match any existing mirror URL for ubuntu
-    if (strstr(source_file, "ubuntu.sources")) {
-        snprintf(cmd, sizeof(cmd), "sed -i 's|URIs: https\\?://[^/ ]*/ubuntu/|URIs: %s|g' %s",
-                 mirror_url, source_file);
+    // Determine the base path to match. Default to ubuntu if not found.
+    const char *match_path = "/ubuntu/";
+    if (access("/etc/debian_version", F_OK) == 0 && access("/etc/os-release", F_OK) == 0) {
+        // Simple heuristic for Debian
+        FILE *os_fp = fopen("/etc/os-release", "r");
+        if (os_fp) {
+            char line[256];
+            while (fgets(line, sizeof(line), os_fp)) {
+                if (strstr(line, "ID=debian")) {
+                    match_path = "/debian/";
+                    break;
+                }
+            }
+            fclose(os_fp);
+        }
+    }
+
+    if (strstr(source_file, ".sources")) {
+        snprintf(cmd, sizeof(cmd), "sed -i 's|URIs: https\\?://[^/ ]*%s|URIs: %s|g' %s",
+                 match_path, mirror_url, source_file);
     } else {
-        snprintf(cmd, sizeof(cmd), "sed -i 's|https\\?://[^/ ]*/ubuntu/|%s|g' %s",
-                 mirror_url, source_file);
+        snprintf(cmd, sizeof(cmd), "sed -i 's|https\\?://[^/ ]*%s|%s|g' %s",
+                 match_path, mirror_url, source_file);
     }
 
     if (run_command(cmd) == 0) {
@@ -47,15 +63,27 @@ void menu_apt() {
     }
     clear_input_buffer();
 
+    const char *base_url;
+    // Again, heuristic for Debian
+    if (access("/etc/debian_version", F_OK) == 0) {
+        base_url = "debian/";
+    } else {
+        base_url = "ubuntu/";
+    }
+
+    char mirror_full[256];
     switch (choice) {
         case 1:
-            change_apt_mirror("https://mirrors.tuna.tsinghua.edu.cn/ubuntu/");
+            snprintf(mirror_full, sizeof(mirror_full), "https://mirrors.tuna.tsinghua.edu.cn/%s", base_url);
+            change_apt_mirror(mirror_full);
             break;
         case 2:
-            change_apt_mirror("https://mirrors.aliyun.com/ubuntu/");
+            snprintf(mirror_full, sizeof(mirror_full), "https://mirrors.aliyun.com/%s", base_url);
+            change_apt_mirror(mirror_full);
             break;
         case 3:
-            change_apt_mirror("https://mirrors.ustc.edu.cn/ubuntu/");
+            snprintf(mirror_full, sizeof(mirror_full), "https://mirrors.ustc.edu.cn/%s", base_url);
+            change_apt_mirror(mirror_full);
             break;
         default:
             break;

@@ -29,11 +29,38 @@ static const char* messages[][2] = {
     [MSG_MIRROR_TAOBAO] = {"Taobao (npmmirror)", "淘宝镜像源 (npmmirror)"},
     [MSG_MIRROR_OFFICIAL] = {"Official Registry", "官方源"},
     [MSG_RESTARTING_DOCKER] = {"Restarting Docker service...", "正在重启 Docker 服务..."},
-    [MSG_LANG_SELECT] = {"Change Language (English/中文)", "切换语言 (English/中文)"}
+    [MSG_LANG_SELECT] = {"Change Language (English/中文)", "切换语言 (English/中文)"},
+    [MSG_CAT_OS] = {"OS Mirrors", "操作系统换源"},
+    [MSG_CAT_DEV] = {"Development Environments", "开发环境换源"},
+    [MSG_CAT_SERVICES] = {"Services & Acceleration", "服务与加速"},
+    [MSG_CAT_TOOLBOX] = {"System Toolbox", "系统工具箱"},
+    [MSG_PLUGINS] = {"Plugin Manager", "插件管理"}
 };
 
 const char* get_msg(int msg_id) {
     return messages[msg_id][current_lang];
+}
+
+void save_config() {
+    char path[512];
+    snprintf(path, sizeof(path), "%s/.super-source.conf", getenv("HOME"));
+    FILE *fp = fopen(path, "w");
+    if (fp) {
+        fprintf(fp, "lang=%d\n", current_lang);
+        fclose(fp);
+    }
+}
+
+void load_config() {
+    char path[512];
+    snprintf(path, sizeof(path), "%s/.super-source.conf", getenv("HOME"));
+    FILE *fp = fopen(path, "r");
+    if (fp) {
+        if (fscanf(fp, "lang=%d", &current_lang) != 1) {
+            current_lang = LANG_CN;
+        }
+        fclose(fp);
+    }
 }
 
 int run_command(const char *cmd) {
