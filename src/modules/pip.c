@@ -14,9 +14,9 @@ static void apply_pip_mirror(const char *mirror_url) {
 
 void menu_pip() {
     MirrorSite sites[] = {
-        {(char*)get_msg(MSG_MIRROR_TSINGHUA), "https://pypi.tuna.tsinghua.edu.cn/simple"},
-        {(char*)get_msg(MSG_MIRROR_ALIYUN), "https://mirrors.aliyun.com/pypi/simple/"},
-        {(char*)get_msg(MSG_MIRROR_USTC), "https://pypi.mirrors.ustc.edu.cn/simple/"}
+        {get_msg(MSG_MIRROR_TSINGHUA), "https://pypi.tuna.tsinghua.edu.cn/simple"},
+        {get_msg(MSG_MIRROR_ALIYUN), "https://mirrors.aliyun.com/pypi/simple/"},
+        {get_msg(MSG_MIRROR_USTC), "https://pypi.mirrors.ustc.edu.cn/simple/"}
     };
     select_mirror_and_apply(get_msg(MSG_PIP_MENU), sites, 3, apply_pip_mirror);
 }

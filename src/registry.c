@@ -1,14 +1,17 @@
 #include "common.h"
 
 static ModuleOption os_modules[] = {
-    {MSG_APT_MENU, menu_apt}
+    {MSG_APT_MENU, menu_apt},
+    {MSG_DNS_MENU, menu_dns}
 };
 
 static ModuleOption dev_modules[] = {
     {MSG_PIP_MENU, menu_pip},
     {MSG_NPM_MENU, menu_npm},
     {MSG_GO_MENU, menu_go},
-    {MSG_RUST_MENU, menu_rust}
+    {MSG_RUST_MENU, menu_rust},
+    {MSG_JVM_MENU, menu_jvm},
+    {MSG_FLUTTER_MENU, menu_flutter}
 };
 
 static ModuleOption service_modules[] = {
@@ -18,7 +21,8 @@ static ModuleOption service_modules[] = {
 
 static ModuleOption toolbox_modules[] = {
     {MSG_CAT_TOOLBOX, menu_toolbox},
-    {MSG_PLUGINS, menu_plugins}
+    {MSG_PLUGINS, menu_plugins},
+    {MSG_AUTO_OPTIMIZER, run_auto_optimizer}
 };
 
 MenuCategory categories[] = {

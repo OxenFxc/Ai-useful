@@ -14,8 +14,8 @@ static void apply_npm_mirror(const char *mirror_url) {
 
 void menu_npm() {
     MirrorSite sites[] = {
-        {(char*)get_msg(MSG_MIRROR_TAOBAO), "https://registry.npmmirror.com"},
-        {(char*)get_msg(MSG_MIRROR_OFFICIAL), "https://registry.npmjs.org/"}
+        {get_msg(MSG_MIRROR_TAOBAO), "https://registry.npmmirror.com"},
+        {get_msg(MSG_MIRROR_OFFICIAL), "https://registry.npmjs.org/"}
     };
     select_mirror_and_apply(get_msg(MSG_NPM_MENU), sites, 2, apply_npm_mirror);
 }
