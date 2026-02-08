@@ -32,7 +32,7 @@ static void apply_docker_mirror(const char *mirror_url) {
 
 void menu_docker() {
     MirrorSite sites[] = {
-        {(char*)get_msg(MSG_MIRROR_ALIYUN), "https://mirrors.aliyun.com"},
+        {get_msg(MSG_MIRROR_ALIYUN), "https://mirrors.aliyun.com"},
         {"Azure China", "https://dockerhub.azk8s.cn"},
         {"Baidu Cloud", "https://mirror.baidubce.com"}
     };

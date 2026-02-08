@@ -28,8 +28,12 @@ enum {
     MSG_RUST_MENU,
     MSG_DOCKER_MENU,
     MSG_GITHUB_MENU,
+    MSG_JVM_MENU,
+    MSG_FLUTTER_MENU,
+    MSG_DNS_MENU,
     MSG_TOOLBOX_MENU,
     MSG_SPEED_TEST,
+    MSG_AUTO_OPTIMIZER,
     MSG_EXIT,
     MSG_ENTER_CHOICE,
     MSG_INVALID_CHOICE,
@@ -104,5 +108,9 @@ void menu_rust();
 void menu_go();
 void menu_github();
 void menu_plugins();
+void menu_jvm();
+void menu_flutter();
+void menu_dns();
+void run_auto_optimizer();
 
 #endif

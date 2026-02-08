@@ -34,8 +34,8 @@ void menu_rust() {
         "[source.ustc]\nregistry = \"git://mirrors.ustc.edu.cn/crates.io-index\"\n";
 
     MirrorSite sites[] = {
-        {(char*)get_msg(MSG_MIRROR_TSINGHUA), tsinghua},
-        {(char*)get_msg(MSG_MIRROR_USTC), ustc}
+        {get_msg(MSG_MIRROR_TSINGHUA), tsinghua},
+        {get_msg(MSG_MIRROR_USTC), ustc}
     };
     select_mirror_and_apply(get_msg(MSG_RUST_MENU), sites, 2, apply_rust_mirror);
 }

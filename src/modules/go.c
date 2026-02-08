@@ -16,7 +16,7 @@ void menu_go() {
     MirrorSite sites[] = {
         {"Goproxy.cn (Qiniu)", "https://goproxy.cn"},
         {"Goproxy.io", "https://goproxy.io"},
-        {(char*)get_msg(MSG_MIRROR_ALIYUN), "https://mirrors.aliyun.com/goproxy/"}
+        {get_msg(MSG_MIRROR_ALIYUN), "https://mirrors.aliyun.com/goproxy/"}
     };
     select_mirror_and_apply(get_msg(MSG_GO_MENU), sites, 3, apply_go_proxy);
 }

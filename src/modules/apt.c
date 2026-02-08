@@ -52,9 +52,9 @@ void menu_apt() {
     snprintf(urls[2], 256, "https://mirrors.ustc.edu.cn/%s", base_url);
 
     MirrorSite sites[] = {
-        {(char*)get_msg(MSG_MIRROR_TSINGHUA), urls[0]},
-        {(char*)get_msg(MSG_MIRROR_ALIYUN), urls[1]},
-        {(char*)get_msg(MSG_MIRROR_USTC), urls[2]}
+        {get_msg(MSG_MIRROR_TSINGHUA), urls[0]},
+        {get_msg(MSG_MIRROR_ALIYUN), urls[1]},
+        {get_msg(MSG_MIRROR_USTC), urls[2]}
     };
 
     select_mirror_and_apply(get_msg(MSG_APT_MENU), sites, 3, apply_apt_mirror);
