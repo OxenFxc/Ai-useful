@@ -1,7 +1,7 @@
 #include "common.h"
 
 void show_sysinfo() {
-    print_header("System Information");
+    print_header(get_msg(MSG_SYSINFO_TITLE));
     run_command("uname -a");
     run_command("cat /etc/os-release | grep PRETTY_NAME");
     run_command("lscpu | grep 'Model name'");
