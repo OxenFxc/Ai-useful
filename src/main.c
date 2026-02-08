@@ -1,67 +1,36 @@
 #include "common.h"
 
-void menu_os() {
+void handle_category(MenuCategory *cat) {
     int choice;
     while (1) {
-        print_header(get_msg(MSG_CAT_OS));
-        printf("1. %s\n", get_msg(MSG_APT_MENU));
-        printf("0. %s\n", get_msg(MSG_BACK));
-        printf("%s", get_msg(MSG_ENTER_CHOICE));
-        if (scanf("%d", &choice) != 1) { clear_input_buffer(); break; }
-        clear_input_buffer();
-        if (choice == 1) menu_apt();
-        else if (choice == 0) break;
-    }
-}
-
-void menu_dev() {
-    int choice;
-    while (1) {
-        print_header(get_msg(MSG_CAT_DEV));
-        printf("1. %s\n", get_msg(MSG_PIP_MENU));
-        printf("2. %s\n", get_msg(MSG_NPM_MENU));
-        printf("3. Go Proxy\n");
-        printf("4. Rust (Cargo) Mirror\n");
-        printf("0. %s\n", get_msg(MSG_BACK));
-        printf("%s", get_msg(MSG_ENTER_CHOICE));
-        if (scanf("%d", &choice) != 1) { clear_input_buffer(); break; }
-        clear_input_buffer();
-        switch (choice) {
-            case 1: menu_pip(); break;
-            case 2: menu_npm(); break;
-            case 3: menu_go(); break;
-            case 4: menu_rust(); break;
-            case 0: return;
+        print_header(get_msg(cat->title_msg_id));
+        for (int i = 0; i < cat->num_options; i++) {
+            printf("%d. %s\n", i + 1, get_msg(cat->options[i].title_msg_id));
         }
-    }
-}
-
-void menu_services() {
-    int choice;
-    while (1) {
-        print_header(get_msg(MSG_CAT_SERVICES));
-        printf("1. %s\n", get_msg(MSG_DOCKER_MENU));
-        printf("2. GitHub Acceleration\n");
         printf("0. %s\n", get_msg(MSG_BACK));
         printf("%s", get_msg(MSG_ENTER_CHOICE));
-        if (scanf("%d", &choice) != 1) { clear_input_buffer(); break; }
+
+        if (scanf("%d", &choice) != 1) {
+            clear_input_buffer();
+            continue;
+        }
         clear_input_buffer();
-        switch (choice) {
-            case 1: menu_docker(); break;
-            case 2: menu_github(); break;
-            case 0: return;
+
+        if (choice == 0) break;
+        if (choice > 0 && choice <= cat->num_options) {
+            cat->options[choice - 1].func();
+        } else {
+            printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_INVALID_CHOICE));
         }
     }
 }
 
 void print_main_menu() {
     print_header(get_msg(MSG_MAIN_TITLE));
-    printf("1. %s\n", get_msg(MSG_CAT_OS));
-    printf("2. %s\n", get_msg(MSG_CAT_DEV));
-    printf("3. %s\n", get_msg(MSG_CAT_SERVICES));
-    printf("4. %s\n", get_msg(MSG_CAT_TOOLBOX));
-    printf("5. %s\n", get_msg(MSG_PLUGINS));
-    printf("6. %s\n", get_msg(MSG_LANG_SELECT));
+    for (int i = 0; i < num_categories; i++) {
+        printf("%d. %s\n", i + 1, get_msg(categories[i].title_msg_id));
+    }
+    printf("%d. %s\n", num_categories + 1, get_msg(MSG_LANG_SELECT));
     printf("0. %s\n", get_msg(MSG_EXIT));
     printf("%s", get_msg(MSG_ENTER_CHOICE));
 }
@@ -77,22 +46,18 @@ int main() {
         }
         clear_input_buffer();
 
-        switch (choice) {
-            case 1: menu_os(); break;
-            case 2: menu_dev(); break;
-            case 3: menu_services(); break;
-            case 4: menu_toolbox(); break;
-            case 5: menu_plugins(); break;
-            case 6:
-                current_lang = (current_lang == LANG_EN) ? LANG_CN : LANG_EN;
-                save_config();
-                break;
-            case 0:
-                printf("Exiting. Have a nice day!\n");
-                return 0;
-            default:
-                printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_INVALID_CHOICE));
-                break;
+        if (choice == 0) {
+            printf("Exiting. Have a nice day!\n");
+            return 0;
+        }
+
+        if (choice > 0 && choice <= num_categories) {
+            handle_category(&categories[choice - 1]);
+        } else if (choice == num_categories + 1) {
+            current_lang = (current_lang == LANG_EN) ? LANG_CN : LANG_EN;
+            save_config();
+        } else {
+            printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_INVALID_CHOICE));
         }
     }
     return 0;

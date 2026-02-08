@@ -1,6 +1,6 @@
 #include "common.h"
 
-void change_rust_mirror(const char *mirror_config) {
+static void apply_rust_mirror(const char *mirror_config) {
     char path[512];
     snprintf(path, sizeof(path), "%s/.cargo/config.toml", getenv("HOME"));
 
@@ -13,7 +13,6 @@ void change_rust_mirror(const char *mirror_config) {
     clear_input_buffer();
 
     backup_file(path);
-
     if (write_file_content(path, mirror_config) == 0) {
         printf(COLOR_GREEN);
         printf(get_msg(MSG_SUCCESS), "Rust (Cargo)");
@@ -24,41 +23,19 @@ void change_rust_mirror(const char *mirror_config) {
 }
 
 void menu_rust() {
-    int choice;
-    print_header("Rust (Cargo) Mirror Configuration");
-    printf("1. %s\n", get_msg(MSG_MIRROR_TSINGHUA));
-    printf("2. %s\n", get_msg(MSG_MIRROR_USTC));
-    printf("0. %s\n", get_msg(MSG_BACK));
-    printf("%s", get_msg(MSG_ENTER_CHOICE));
-    if (scanf("%d", &choice) != 1) {
-        clear_input_buffer();
-        return;
-    }
-    clear_input_buffer();
-
     const char *tsinghua =
-        "[source.crates-io]\n"
-        "replace-with = 'tuna'\n\n"
-        "[source.tuna]\n"
-        "registry = \"https://github.com/rust-lang/crates.io-index\"\n"
+        "[source.crates-io]\nreplace-with = 'tuna'\n\n"
+        "[source.tuna]\nregistry = \"https://github.com/rust-lang/crates.io-index\"\n"
         "replace-with = 'tuna-index'\n\n"
-        "[source.tuna-index]\n"
-        "registry = \"https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git\"\n";
+        "[source.tuna-index]\nregistry = \"https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git\"\n";
 
     const char *ustc =
-        "[source.crates-io]\n"
-        "replace-with = 'ustc'\n\n"
-        "[source.ustc]\n"
-        "registry = \"git://mirrors.ustc.edu.cn/crates.io-index\"\n";
+        "[source.crates-io]\nreplace-with = 'ustc'\n\n"
+        "[source.ustc]\nregistry = \"git://mirrors.ustc.edu.cn/crates.io-index\"\n";
 
-    switch (choice) {
-        case 1:
-            change_rust_mirror(tsinghua);
-            break;
-        case 2:
-            change_rust_mirror(ustc);
-            break;
-        default:
-            break;
-    }
+    MirrorSite sites[] = {
+        {(char*)get_msg(MSG_MIRROR_TSINGHUA), tsinghua},
+        {(char*)get_msg(MSG_MIRROR_USTC), ustc}
+    };
+    select_mirror_and_apply(get_msg(MSG_RUST_MENU), sites, 2, apply_rust_mirror);
 }
