@@ -30,6 +30,8 @@ enum {
     MSG_GITHUB_MENU,
     MSG_JVM_MENU,
     MSG_FLUTTER_MENU,
+    MSG_COMPOSER_MENU,
+    MSG_GEMS_MENU,
     MSG_DNS_MENU,
     MSG_TOOLBOX_MENU,
     MSG_SPEED_TEST,
@@ -56,7 +58,8 @@ enum {
     MSG_CAT_DEV,
     MSG_CAT_SERVICES,
     MSG_CAT_TOOLBOX,
-    MSG_PLUGINS
+    MSG_PLUGINS,
+    MSG_NETWORK_MENU
 };
 
 // Generic Menu structures for decoupling
@@ -89,6 +92,7 @@ double test_mirror_speed(const char *url);
 const char* get_msg(int msg_id);
 void save_config();
 void load_config();
+char* detect_mirror_status(const char *file, const char *pattern);
 
 // Generic selection UI
 void select_mirror_and_apply(const char *title, MirrorSite *sites, int num_sites, void (*apply_func)(const char*));
@@ -112,5 +116,8 @@ void menu_jvm();
 void menu_flutter();
 void menu_dns();
 void run_auto_optimizer();
+void menu_composer();
+void menu_gems();
+void menu_network();
 
 #endif

@@ -11,7 +11,9 @@ static ModuleOption dev_modules[] = {
     {MSG_GO_MENU, menu_go},
     {MSG_RUST_MENU, menu_rust},
     {MSG_JVM_MENU, menu_jvm},
-    {MSG_FLUTTER_MENU, menu_flutter}
+    {MSG_FLUTTER_MENU, menu_flutter},
+    {MSG_COMPOSER_MENU, menu_composer},
+    {MSG_GEMS_MENU, menu_gems}
 };
 
 static ModuleOption service_modules[] = {
@@ -22,7 +24,8 @@ static ModuleOption service_modules[] = {
 static ModuleOption toolbox_modules[] = {
     {MSG_CAT_TOOLBOX, menu_toolbox},
     {MSG_PLUGINS, menu_plugins},
-    {MSG_AUTO_OPTIMIZER, run_auto_optimizer}
+    {MSG_AUTO_OPTIMIZER, run_auto_optimizer},
+    {MSG_NETWORK_MENU, menu_network}
 };
 
 MenuCategory categories[] = {

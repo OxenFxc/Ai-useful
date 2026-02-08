@@ -37,6 +37,9 @@ static const char* messages[][2] = {
     [MSG_MIRROR_OFFICIAL] = {"Official Registry", "官方源"},
     [MSG_RESTARTING_DOCKER] = {"Restarting Docker service...", "正在重启 Docker 服务..."},
     [MSG_LANG_SELECT] = {"Change Language (English/中文)", "切换语言 (English/中文)"},
+    [MSG_COMPOSER_MENU] = {"Composer Registry (PHP)", "Composer 换源 (PHP)"},
+    [MSG_GEMS_MENU] = {"RubyGems Source (Ruby)", "RubyGems 换源 (Ruby)"},
+    [MSG_NETWORK_MENU] = {"Network Toolbox", "网络工具箱"},
     [MSG_CAT_OS] = {"OS Mirrors", "操作系统换源"},
     [MSG_CAT_DEV] = {"Development Environments", "开发环境换源"},
     [MSG_CAT_SERVICES] = {"Services & Acceleration", "服务与加速"},
@@ -141,6 +144,27 @@ void select_mirror_and_apply(const char *title, MirrorSite *sites, int num_sites
             printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_INVALID_CHOICE));
         }
     }
+}
+
+char* detect_mirror_status(const char *file, const char *pattern) {
+    if (access(file, F_OK) == -1) return NULL;
+
+    char cmd[1024];
+    snprintf(cmd, sizeof(cmd), "grep -o \"%s\" %s | head -n 1", pattern, file);
+
+    FILE *fp = popen(cmd, "r");
+    if (fp == NULL) return NULL;
+
+    char *result = malloc(256);
+    if (fgets(result, 256, fp)) {
+        result[strcspn(result, "\n")] = 0;
+        pclose(fp);
+        return result;
+    }
+
+    free(result);
+    pclose(fp);
+    return NULL;
 }
 
 double test_mirror_speed(const char *url) {

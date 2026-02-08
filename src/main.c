@@ -35,8 +35,35 @@ void print_main_menu() {
     printf("%s", get_msg(MSG_ENTER_CHOICE));
 }
 
-int main() {
+void print_usage(const char *progname) {
+    printf("Usage: %s [options]\n", progname);
+    printf("Options:\n");
+    printf("  -h, --help     Show this help message\n");
+    printf("  -v, --version  Show version information\n");
+    printf("  -a, --auto     Run auto-optimizer immediately\n");
+}
+
+int main(int argc, char *argv[]) {
     load_config();
+
+    if (argc > 1) {
+        if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
+            print_usage(argv[0]);
+            return 0;
+        } else if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0) {
+            printf("Super Source Toolbox v5.1\n");
+            printf("A modular, multi-purpose mirror configuration tool.\n");
+            return 0;
+        } else if (strcmp(argv[1], "-a") == 0 || strcmp(argv[1], "--auto") == 0) {
+            run_auto_optimizer();
+            return 0;
+        } else {
+            printf("Unknown option: %s\n", argv[1]);
+            print_usage(argv[0]);
+            return 1;
+        }
+    }
+
     int choice;
     while (1) {
         print_main_menu();

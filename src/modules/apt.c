@@ -45,6 +45,15 @@ static void apply_apt_mirror(const char *mirror_url) {
 }
 
 void menu_apt() {
+    const char *source_file = "/etc/apt/sources.list.d/ubuntu.sources";
+    if (access(source_file, F_OK) == -1) source_file = "/etc/apt/sources.list";
+
+    char *current = detect_mirror_status(source_file, "https\\?://[^/ ]*");
+    if (current) {
+        printf("Current Mirror: " COLOR_BLUE "%s" COLOR_RESET "\n", current);
+        free(current);
+    }
+
     const char *base_url = (access("/etc/debian_version", F_OK) == 0) ? "debian/" : "ubuntu/";
     char urls[3][256];
     snprintf(urls[0], 256, "https://mirrors.tuna.tsinghua.edu.cn/%s", base_url);
