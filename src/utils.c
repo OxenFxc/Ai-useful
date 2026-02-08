@@ -2,8 +2,44 @@
 #include <sys/stat.h>
 #include <time.h>
 
+int current_lang = LANG_CN; // Default to Chinese
+
+static const char* messages[][2] = {
+    [MSG_MAIN_TITLE] = {"Super Source Toolbox", "超级换源工具箱"},
+    [MSG_APT_MENU] = {"APT Mirror (Debian/Ubuntu)", "APT 换源 (Debian/Ubuntu)"},
+    [MSG_PIP_MENU] = {"Pip Mirror (Python)", "Pip 换源 (Python)"},
+    [MSG_NPM_MENU] = {"NPM Registry (Node.js)", "NPM 换源 (Node.js)"},
+    [MSG_DOCKER_MENU] = {"Docker Registry", "Docker 换源"},
+    [MSG_TOOLBOX_MENU] = {"Toolbox (System Info, Cleanup, etc.)", "工具箱 (系统信息, 清理等)"},
+    [MSG_SPEED_TEST] = {"Run Mirror Speed Test", "运行镜像测速"},
+    [MSG_EXIT] = {"Exit", "退出"},
+    [MSG_ENTER_CHOICE] = {"Enter choice: ", "请输入选项: "},
+    [MSG_INVALID_CHOICE] = {"Invalid choice.", "无效的选项。"},
+    [MSG_BACK] = {"Back", "返回"},
+    [MSG_EXECUTING] = {"Executing: %s", "正在执行: %s"},
+    [MSG_BACKUP_TO] = {"Backing up %s to %s", "正在备份 %s 到 %s"},
+    [MSG_SUCCESS] = {"Successfully changed mirror to %s", "成功更换源为 %s"},
+    [MSG_FAILURE] = {"Failed to change mirror.", "更换源失败。"},
+    [MSG_PERMISSION_DENIED] = {"Error: No write permission. Try running with sudo.", "错误：没有写入权限。请尝试使用 sudo。"},
+    [MSG_CLEANUP_TITLE] = {"System Cleanup", "系统清理"},
+    [MSG_SYSINFO_TITLE] = {"System Information", "系统信息"},
+    [MSG_MIRROR_TSINGHUA] = {"Tsinghua University", "清华大学镜像源"},
+    [MSG_MIRROR_ALIYUN] = {"Alibaba Cloud", "阿里云镜像源"},
+    [MSG_MIRROR_USTC] = {"USTC", "中科大镜像源"},
+    [MSG_MIRROR_TAOBAO] = {"Taobao (npmmirror)", "淘宝镜像源 (npmmirror)"},
+    [MSG_MIRROR_OFFICIAL] = {"Official Registry", "官方源"},
+    [MSG_RESTARTING_DOCKER] = {"Restarting Docker service...", "正在重启 Docker 服务..."},
+    [MSG_LANG_SELECT] = {"Change Language (English/中文)", "切换语言 (English/中文)"}
+};
+
+const char* get_msg(int msg_id) {
+    return messages[msg_id][current_lang];
+}
+
 int run_command(const char *cmd) {
-    printf(COLOR_BLUE "Executing: %s" COLOR_RESET "\n", cmd);
+    printf(COLOR_BLUE);
+    printf(get_msg(MSG_EXECUTING), cmd);
+    printf(COLOR_RESET "\n");
     return system(cmd);
 }
 
@@ -21,7 +57,9 @@ int backup_file(const char *filepath) {
 
     char cmd[1024];
     snprintf(cmd, sizeof(cmd), "cp %s %s", filepath, backup_path);
-    printf(COLOR_YELLOW "Backing up %s to %s" COLOR_RESET "\n", filepath, backup_path);
+    printf(COLOR_YELLOW);
+    printf(get_msg(MSG_BACKUP_TO), filepath, backup_path);
+    printf(COLOR_RESET "\n");
     return system(cmd);
 }
 
@@ -43,4 +81,19 @@ void print_header(const char *title) {
 void clear_input_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+}
+
+double test_mirror_speed(const char *url) {
+    char cmd[1024];
+    // Use curl to get total time. Redirect output to a temp file and read it.
+    snprintf(cmd, sizeof(cmd), "curl -o /dev/null -s -w \"%%{time_total}\" --connect-timeout 2 --max-time 5 %s", url);
+
+    FILE *fp = popen(cmd, "r");
+    if (fp == NULL) return -1.0;
+
+    double duration = -1.0;
+    if (fscanf(fp, "%lf", &duration) != 1) duration = -1.0;
+    pclose(fp);
+
+    return duration;
 }

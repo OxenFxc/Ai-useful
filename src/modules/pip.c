@@ -5,20 +5,22 @@ void change_pip_mirror(const char *mirror_url) {
     snprintf(cmd, sizeof(cmd), "pip config set global.index-url %s", mirror_url);
 
     if (run_command(cmd) == 0) {
-        printf(COLOR_GREEN "Successfully changed Pip mirror to %s" COLOR_RESET "\n", mirror_url);
+        printf(COLOR_GREEN);
+        printf(get_msg(MSG_SUCCESS), mirror_url);
+        printf(COLOR_RESET "\n");
     } else {
-        printf(COLOR_RED "Failed to change Pip mirror." COLOR_RESET "\n");
+        printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_FAILURE));
     }
 }
 
 void menu_pip() {
     int choice;
-    print_header("Pip Mirror Configuration");
-    printf("1. Tsinghua University\n");
-    printf("2. Alibaba Cloud\n");
-    printf("3. USTC\n");
-    printf("0. Back\n");
-    printf("Enter choice: ");
+    print_header(get_msg(MSG_PIP_MENU));
+    printf("1. %s\n", get_msg(MSG_MIRROR_TSINGHUA));
+    printf("2. %s\n", get_msg(MSG_MIRROR_ALIYUN));
+    printf("3. %s\n", get_msg(MSG_MIRROR_USTC));
+    printf("0. %s\n", get_msg(MSG_BACK));
+    printf("%s", get_msg(MSG_ENTER_CHOICE));
     if (scanf("%d", &choice) != 1) {
         clear_input_buffer();
         return;

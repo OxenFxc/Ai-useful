@@ -5,19 +5,21 @@ void change_npm_mirror(const char *mirror_url) {
     snprintf(cmd, sizeof(cmd), "npm config set registry %s", mirror_url);
 
     if (run_command(cmd) == 0) {
-        printf(COLOR_GREEN "Successfully changed NPM registry to %s" COLOR_RESET "\n", mirror_url);
+        printf(COLOR_GREEN);
+        printf(get_msg(MSG_SUCCESS), mirror_url);
+        printf(COLOR_RESET "\n");
     } else {
-        printf(COLOR_RED "Failed to change NPM registry." COLOR_RESET "\n");
+        printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_FAILURE));
     }
 }
 
 void menu_npm() {
     int choice;
-    print_header("NPM Registry Configuration");
-    printf("1. Taobao (Registry.npmmirror.com)\n");
-    printf("2. Official Registry\n");
-    printf("0. Back\n");
-    printf("Enter choice: ");
+    print_header(get_msg(MSG_NPM_MENU));
+    printf("1. %s\n", get_msg(MSG_MIRROR_TAOBAO));
+    printf("2. %s\n", get_msg(MSG_MIRROR_OFFICIAL));
+    printf("0. %s\n", get_msg(MSG_BACK));
+    printf("%s", get_msg(MSG_ENTER_CHOICE));
     if (scanf("%d", &choice) != 1) {
         clear_input_buffer();
         return;

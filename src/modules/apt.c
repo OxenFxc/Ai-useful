@@ -7,41 +7,40 @@ void change_apt_mirror(const char *mirror_url) {
     }
 
     if (access(source_file, W_OK) == -1) {
-        printf(COLOR_RED "Error: No write permission for %s. Try running with sudo." COLOR_RESET "\n", source_file);
+        printf(COLOR_RED "%s (%s)" COLOR_RESET "\n", get_msg(MSG_PERMISSION_DENIED), source_file);
         return;
     }
 
     backup_file(source_file);
 
     char cmd[1024];
-    // Simple sed command to replace the URI.
-    // For DEB822 format (ubuntu.sources), it looks for URIs: ...
-    // For old format (sources.list), it looks for http://... or https://...
-
+    // Generic regex to match any existing mirror URL for ubuntu
     if (strstr(source_file, "ubuntu.sources")) {
-        snprintf(cmd, sizeof(cmd), "sed -i 's|URIs: https\\?://.*archive.ubuntu.com/ubuntu/|URIs: %s|g; s|URIs: https\\?://security.ubuntu.com/ubuntu/|URIs: %s|g' %s",
-                 mirror_url, mirror_url, source_file);
+        snprintf(cmd, sizeof(cmd), "sed -i 's|URIs: https\\?://[^/ ]*/ubuntu/|URIs: %s|g' %s",
+                 mirror_url, source_file);
     } else {
-        snprintf(cmd, sizeof(cmd), "sed -i 's|https\\?://.*archive.ubuntu.com/ubuntu/|%s|g; s|https\\?://security.ubuntu.com/ubuntu/|%s|g' %s",
-                 mirror_url, mirror_url, source_file);
+        snprintf(cmd, sizeof(cmd), "sed -i 's|https\\?://[^/ ]*/ubuntu/|%s|g' %s",
+                 mirror_url, source_file);
     }
 
     if (run_command(cmd) == 0) {
-        printf(COLOR_GREEN "Successfully changed APT mirror to %s" COLOR_RESET "\n", mirror_url);
+        printf(COLOR_GREEN);
+        printf(get_msg(MSG_SUCCESS), mirror_url);
+        printf(COLOR_RESET "\n");
         run_command("apt-get update");
     } else {
-        printf(COLOR_RED "Failed to change APT mirror." COLOR_RESET "\n");
+        printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_FAILURE));
     }
 }
 
 void menu_apt() {
     int choice;
-    print_header("APT Mirror Configuration");
-    printf("1. Tsinghua University\n");
-    printf("2. Alibaba Cloud\n");
-    printf("3. USTC\n");
-    printf("0. Back\n");
-    printf("Enter choice: ");
+    print_header(get_msg(MSG_APT_MENU));
+    printf("1. %s\n", get_msg(MSG_MIRROR_TSINGHUA));
+    printf("2. %s\n", get_msg(MSG_MIRROR_ALIYUN));
+    printf("3. %s\n", get_msg(MSG_MIRROR_USTC));
+    printf("0. %s\n", get_msg(MSG_BACK));
+    printf("%s", get_msg(MSG_ENTER_CHOICE));
     if (scanf("%d", &choice) != 1) {
         clear_input_buffer();
         return;
