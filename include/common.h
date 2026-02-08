@@ -24,7 +24,10 @@ enum {
     MSG_APT_MENU,
     MSG_PIP_MENU,
     MSG_NPM_MENU,
+    MSG_GO_MENU,
+    MSG_RUST_MENU,
     MSG_DOCKER_MENU,
+    MSG_GITHUB_MENU,
     MSG_TOOLBOX_MENU,
     MSG_SPEED_TEST,
     MSG_EXIT,
@@ -52,6 +55,26 @@ enum {
     MSG_PLUGINS
 };
 
+// Generic Menu structures for decoupling
+typedef void (*MenuFunc)();
+
+typedef struct {
+    int title_msg_id;
+    MenuFunc func;
+} ModuleOption;
+
+typedef struct {
+    int title_msg_id;
+    ModuleOption *options;
+    int num_options;
+} MenuCategory;
+
+// Generic Mirror structure
+typedef struct {
+    const char *name;
+    const char *url;
+} MirrorSite;
+
 // Utility functions
 int run_command(const char *cmd);
 int backup_file(const char *filepath);
@@ -63,7 +86,14 @@ const char* get_msg(int msg_id);
 void save_config();
 void load_config();
 
-// Module functions
+// Generic selection UI
+void select_mirror_and_apply(const char *title, MirrorSite *sites, int num_sites, void (*apply_func)(const char*));
+
+// Registry exports
+extern MenuCategory categories[];
+extern int num_categories;
+
+// Module functions (to be refactored into registry)
 void menu_apt();
 void menu_pip();
 void menu_npm();

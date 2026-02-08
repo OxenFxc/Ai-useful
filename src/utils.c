@@ -9,7 +9,10 @@ static const char* messages[][2] = {
     [MSG_APT_MENU] = {"APT Mirror (Debian/Ubuntu)", "APT 换源 (Debian/Ubuntu)"},
     [MSG_PIP_MENU] = {"Pip Mirror (Python)", "Pip 换源 (Python)"},
     [MSG_NPM_MENU] = {"NPM Registry (Node.js)", "NPM 换源 (Node.js)"},
+    [MSG_GO_MENU] = {"Go Proxy", "Go 代理设置"},
+    [MSG_RUST_MENU] = {"Rust (Cargo) Mirror", "Rust (Cargo) 换源"},
     [MSG_DOCKER_MENU] = {"Docker Registry", "Docker 换源"},
+    [MSG_GITHUB_MENU] = {"GitHub Acceleration", "GitHub 加速"},
     [MSG_TOOLBOX_MENU] = {"Toolbox (System Info, Cleanup, etc.)", "工具箱 (系统信息, 清理等)"},
     [MSG_SPEED_TEST] = {"Run Mirror Speed Test", "运行镜像测速"},
     [MSG_EXIT] = {"Exit", "退出"},
@@ -108,6 +111,32 @@ void print_header(const char *title) {
 void clear_input_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void select_mirror_and_apply(const char *title, MirrorSite *sites, int num_sites, void (*apply_func)(const char*)) {
+    int choice;
+    while (1) {
+        print_header(title);
+        for (int i = 0; i < num_sites; i++) {
+            printf("%d. %s\n", i + 1, sites[i].name);
+        }
+        printf("0. %s\n", get_msg(MSG_BACK));
+        printf("%s", get_msg(MSG_ENTER_CHOICE));
+
+        if (scanf("%d", &choice) != 1) {
+            clear_input_buffer();
+            continue;
+        }
+        clear_input_buffer();
+
+        if (choice == 0) break;
+        if (choice > 0 && choice <= num_sites) {
+            apply_func(sites[choice - 1].url);
+            break;
+        } else {
+            printf(COLOR_RED "%s" COLOR_RESET "\n", get_msg(MSG_INVALID_CHOICE));
+        }
+    }
 }
 
 double test_mirror_speed(const char *url) {
